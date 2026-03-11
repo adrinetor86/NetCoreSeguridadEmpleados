@@ -18,6 +18,7 @@ public class AuthorizeEmpleadosAttribute :AuthorizeAttribute,IAuthorizationFilte
         }
         
     }
+    
     //EN ALGUN MOMENTO TENDREMOS MAS REDIRECCIONES QUE SOLO A LOGIN,
     //POR LO QUE CREAMOS UN METODO PARA REDIRECCIONAR
 
