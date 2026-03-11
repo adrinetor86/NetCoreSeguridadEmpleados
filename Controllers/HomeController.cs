@@ -4,6 +4,7 @@ using NetCoreSeguridadEmpleados.Models;
 
 namespace NetCoreSeguridadEmpleados.Controllers
 {
+    
     public class HomeController : Controller
     {
         public IActionResult Index()
