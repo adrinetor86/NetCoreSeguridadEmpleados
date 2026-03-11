@@ -15,6 +15,16 @@ public class AuthorizeEmpleadosAttribute :AuthorizeAttribute,IAuthorizationFilte
         if (user.Identity.IsAuthenticated == false)
         {
             context.Result = GetRoute("Managed", "Login");
+        }else
+        {
+            //COMPROBAMOS LOS ROLES.
+            //TENEMOS EN CUENTA MAYUSCULAS/MINUSCULAS
+            if (user.IsInRole("PRESIDENTE") == false
+                && user.IsInRole("DIRECTOR") == false
+                && user.IsInRole("ANALISTA") == false)
+            {
+                context.Result= GetRoute("Managed", "ErrorAcceso");
+            }
         }
         
     }

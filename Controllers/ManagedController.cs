@@ -66,5 +66,10 @@ public class ManagedController : Controller
             (CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }
+
+    public async Task<IActionResult> ErrorAcceso()
+    {
+        return View();
+    }
     
 }
