@@ -24,7 +24,6 @@ public class ManagedController : Controller
     }  
     
     [HttpPost]
-
     public async Task<IActionResult> Login(string username, string password)
     {
         int idEmpleado = int.Parse(password);
@@ -34,6 +33,12 @@ public class ManagedController : Controller
             ClaimsIdentity identity = new ClaimsIdentity(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 ClaimTypes.Name, ClaimTypes.Role);
+            //EMPLEADO ARROYO: 7499 SERA NUESTRO ADMINISTRADOR
+            if (empleado.IdEmpleado == 7499)
+            {
+                Claim claimAdmin= new Claim("Admin", "Soy el boss");
+                identity.AddClaim(claimAdmin);
+            }
             Claim claimName=new Claim(ClaimTypes.Name,username);
             identity.AddClaim(claimName);
             Claim claimId = new Claim(ClaimTypes.NameIdentifier
@@ -55,9 +60,13 @@ public class ManagedController : Controller
             string contoller= TempData["controller"].ToString();
             string action= TempData["action"].ToString();
             
-            //POR AHORA LO ENVIAMOS A UNA VISTA QUE HAREMOS EN BREVE
-            
-            return RedirectToAction(action, contoller);
+            if (TempData["id"] != null)
+            {
+                string id = TempData["id"].ToString();
+                return RedirectToAction(action, contoller,new{id=id});
+            }
+                return RedirectToAction(action, contoller);
+                
         }
         else
         {

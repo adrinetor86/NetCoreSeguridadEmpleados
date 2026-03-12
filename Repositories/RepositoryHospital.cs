@@ -43,6 +43,17 @@ public class RepositoryHospital
         }
 
         await _context.SaveChangesAsync();
+    }   
+    
+    public async Task DeleteEmpleado(int id)
+    {
+        
+        Empleado empleado = await FindEmpleadoAsync(id);
+
+        _context.Empleados.Remove(empleado);
+        
+        await _context.SaveChangesAsync();
+        
     }
 
 
@@ -53,7 +64,21 @@ public class RepositoryHospital
               && z.IdEmpleado == idEmpleado);
         return empleado;
     }
-    
+
+
+    public async Task<Boolean> TieneSubordinados(int id)
+    {
+
+
+        if (await _context.Empleados.Where(z => z.dir == id).CountAsync() != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     
     
     

@@ -21,9 +21,11 @@ public class EmpleadosController : Controller
         return View(empleados);
     }  
     
+    [AuthorizeEmpleados]
     public async Task<IActionResult> Details(int id)
     {
         Empleado empleado = await _repoHosp.FindEmpleadoAsync(id);
+        
         return View(empleado);
     }
 
@@ -33,7 +35,16 @@ public class EmpleadosController : Controller
         return View();
     }
 
-    [AuthorizeEmpleados]
+    [AuthorizeEmpleados(Policy = "SoloSub")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        
+       await _repoHosp.DeleteEmpleado(id);
+        
+        return RedirectToAction("Index");    
+    }
+    
+    [AuthorizeEmpleados(Policy = "SOLOJEFES")]
     public async Task<IActionResult> Compis()
     {
         //RECUPERAMOS EL CLAIM DEL USUARIO VALIDADO
@@ -44,7 +55,7 @@ public class EmpleadosController : Controller
         return View(empleados);
     }   
     [HttpPost]
-    [AuthorizeEmpleados]
+    [AuthorizeEmpleados(Policy = "SOLOJEFES")]
     public async Task<IActionResult> Compis(int incremento)
     {
         string dato= HttpContext.User.FindFirstValue("Departamento");
@@ -55,8 +66,18 @@ public class EmpleadosController : Controller
         List<Empleado> empleados = await _repoHosp.GetEmpleadosDepartamentoAsync(idDept);
         return View(empleados);
     }
+
+    [AuthorizeEmpleados(Policy = "ADMINONLY")]
+    public IActionResult AdminEmpleados()
+    {
+        return View();
+    }
     
-    
+    [AuthorizeEmpleados(Policy = "SoloRicos")]
+    public IActionResult ZonaNoble()
+    {
+        return View();
+    }
     
     
 }

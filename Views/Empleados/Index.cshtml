@@ -27,6 +27,12 @@
                    asp-action="Details"
                    asp-route-id="@emp.IdEmpleado">
                     Detalles
+                </a> 
+                <a class="nav-link text-dark" asp-area=""
+                   asp-controller="Empleados"
+                   asp-action="Delete"
+                   asp-route-id="@emp.IdEmpleado">
+                    Delete
                 </a>
             </td>
         </tr>

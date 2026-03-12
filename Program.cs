@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using NetCoreSeguridadEmpleados.Data;
+using NetCoreSeguridadEmpleados.Policies;
 using NetCoreSeguridadEmpleados.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +18,12 @@ builder.Services.AddAuthentication
             CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme=
             CookieAuthenticationDefaults.AuthenticationScheme;
-    }).AddCookie();
+    }).AddCookie(
+    CookieAuthenticationDefaults.AuthenticationScheme,
+    config =>
+    {
+        config.AccessDeniedPath = "/Managed/ErrorAcceso";
+    });
 
 builder.Services.AddControllersWithViews
     (options=> options.EnableEndpointRouting=false).AddSessionStateTempDataProvider();
@@ -24,10 +31,30 @@ builder.Services.AddControllersWithViews
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-string connectionString = builder.Configuration.GetConnectionString("SqlHospital");
-builder.Services.AddDbContext<DataContext>(options =>options.UseSqlServer(connectionString));
+//LAS POLITICAS SE AGREGAN CON AUTHORIZATION
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<RepositoryHospital>();
+
+builder.Services.AddSingleton<IAuthorizationHandler, SubordinadoHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    //DEBEMOS CREAR LAS POLICIES QUE NECESITEMOS PARA LOS ROLES
+    
+    options.AddPolicy("SOLOJEFES",
+        policy=>policy.RequireRole("PRESIDENTE","DIRECTOR","ANALISTA"));
+    options.AddPolicy("AdminOnly",
+        policy=>policy.RequireClaim("Admin"));
+    options.AddPolicy("SoloRicos",
+        policy=>policy.Requirements.Add(new OverSalarioRequirement()));
+    options.AddPolicy("SoloSub",
+        policy => policy.Requirements.Add(new SubordinadoRequirement()));
+    
+});
+
+
+string connectionString = builder.Configuration.GetConnectionString("SqlHospital");
+builder.Services.AddDbContext<DataContext>(options =>options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
