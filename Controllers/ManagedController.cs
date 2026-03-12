@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NetCoreSeguridadEmpleados.Filters;
 using NetCoreSeguridadEmpleados.Models;
 using NetCoreSeguridadEmpleados.Repositories;
 
@@ -22,6 +24,7 @@ public class ManagedController : Controller
     }  
     
     [HttpPost]
+
     public async Task<IActionResult> Login(string username, string password)
     {
         int idEmpleado = int.Parse(password);
@@ -49,9 +52,12 @@ public class ManagedController : Controller
             ClaimsPrincipal userPrincipal= new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal);
             
+            string contoller= TempData["controller"].ToString();
+            string action= TempData["action"].ToString();
+            
             //POR AHORA LO ENVIAMOS A UNA VISTA QUE HAREMOS EN BREVE
             
-            return RedirectToAction("PerfilEmpleado", "Empleados");
+            return RedirectToAction(action, contoller);
         }
         else
         {

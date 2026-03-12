@@ -17,8 +17,10 @@ builder.Services.AddAuthentication
         options.DefaultChallengeScheme=
             CookieAuthenticationDefaults.AuthenticationScheme;
     }).AddCookie();
+
 builder.Services.AddControllersWithViews
-    (options=> options.EnableEndpointRouting=false);
+    (options=> options.EnableEndpointRouting=false).AddSessionStateTempDataProvider();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

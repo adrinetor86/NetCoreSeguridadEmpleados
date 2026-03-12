@@ -42,8 +42,21 @@ public class EmpleadosController : Controller
         List<Empleado> empleados=await _repoHosp.GetEmpleadosDepartamentoAsync(idDept); 
         
         return View(empleados);
+    }   
+    [HttpPost]
+    [AuthorizeEmpleados]
+    public async Task<IActionResult> Compis(int incremento)
+    {
+        string dato= HttpContext.User.FindFirstValue("Departamento");
 
+        int idDept = int.Parse(dato);
+        
+        await _repoHosp.UpdateSalarioEmpleadosAsync(idDept,incremento);
+        List<Empleado> empleados = await _repoHosp.GetEmpleadosDepartamentoAsync(idDept);
+        return View(empleados);
     }
+    
+    
     
     
 }
